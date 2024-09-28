@@ -1,32 +1,43 @@
 {
   "name": "react-custom-hooks",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.ts",
+  "description": "A collection of useful React custom hooks written in TypeScript",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
-    "test": "jest",
-    "prepare": "npm run build"
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
-  },
+  "keywords": [
+    "react",
+    "hooks",
+    "custom hooks",
+    "typescript"
+  ],
+  "author": "Farhan Tafader",
+  "license": "MIT",
   "peerDependencies": {
-    "react": "^17.0.0 || ^18.0.0",
-    "react-dom": "^17.0.0 || ^18.0.0"
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.4",
     "@babel/preset-react": "^7.24.7",
-    "@testing-library/jest-dom": "^6.5.0",
-    "@testing-library/react": "^16.0.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "@types/jest": "^29.5.13",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
-    "jest": "^29.7.0",
+    "@types/testing-library__react-hooks": "^4.0.0",
+    "rollup": "^4.22.5",
+    "rollup-plugin-dts": "^6.1.1",
     "typescript": "^5.6.2"
   }
 }

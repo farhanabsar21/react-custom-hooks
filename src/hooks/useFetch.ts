@@ -1,43 +1,50 @@
-import { useState, useEffect } from 'react';
-import { UseFetchOptions, UseFetchResult } from '../@types';
+import { FetchOptions, FetchState, UseFetchResult } from 'hook-types';
+import { useState, useEffect, useCallback } from 'react';
 
-function useFetch<T = unknown>(
-    url: string,
-    options: UseFetchOptions = { method: 'GET' }
-): UseFetchResult<T> {
-    const [data, setData] = useState<T | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<Error | null>(null);
+const useFetch = <T>(url: string, options: FetchOptions = { method: 'GET' }): UseFetchResult<T> => {
+    const [state, setState] = useState<FetchState<T>>({
+        data: null,
+        isLoading: true,
+        error: null,
+    });
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(url, {
-                    method: options.method || 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...options.headers,
-                    },
-                    body: options.body ? JSON.stringify(options.body) : undefined,
-                });
+    const fetchData = useCallback(async () => {
+        setState(prev => ({ ...prev, isLoading: true }));
+        try {
+            const fetchOptions: RequestInit = {
+                method: options.method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers,
+                },
+            };
 
-                if (!response.ok) {
-                    throw new Error(`Error: ${response.statusText}`);
-                }
-
-                const result: T = await response.json();
-                setData(result);
-            } catch (err) {
-                setError(err as Error);
-            } finally {
-                setLoading(false);
+            if (options.body && options.method !== 'GET') {
+                fetchOptions.body = JSON.stringify(options.body);
             }
-        };
 
-        fetchData();
+            const response = await fetch(url, fetchOptions);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setState({ data: result, isLoading: false, error: null });
+        } catch (error) {
+            setState({ data: null, isLoading: false, error: error as Error });
+        }
     }, [url, options]);
 
-    return { data, loading, error };
-}
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
+    const refetch = useCallback(() => {
+        fetchData();
+    }, [fetchData]);
+
+    return { ...state, refetch };
+};
 
 export default useFetch;
