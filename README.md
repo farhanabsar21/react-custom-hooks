@@ -15,3 +15,9 @@ You can install the library via npm:
 ```bash
 npm install react-custom-hooks
 ```
+
+or using Yarn:
+
+```yarn
+yarn add react-custom-hooks
+```
